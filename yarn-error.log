@@ -1,0 +1,36 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\18455\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add @vitejs/app
+
+PATH: 
+  C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_1.8.1444.0_x64__8wekyb3d8bbwe;C:\Program Files\nodejs\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\Common Files\Oracle\Java\javapath;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files (x86)\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\EmEditor;C:\ProgramData\Anaconda3\condabin;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Redis\;C:\Program Files\Java\jdk1.8.0_271;C:\Program Files\Java\jdk1.8.0_271\bin;D:\LiuHuan\W-Work\P-ProjectL\G-Go\bin;C:\Program Files (x86)\NetSarang\Xshell 7\;C:\Go\bin;D:\BaiduNetdiskDownload\ffmpeg-2020-12-09-git-7777e5119a-full_build\bin;C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\18455\AppData\Local\Microsoft\WindowsApps;C:\Users\18455\AppData\Roaming\npm;C:\Program Files\JetBrains\PyCharm 2021.1.1\bin;C:\Program Files\JetBrains\GoLand 2021.1\bin;C:\Program Files\JetBrains\WebStorm 2021.1\bin;C:\Program Files\Microsoft VS Code\bin;C:\Users\18455\.dotnet\tools;C:\Users\18455\AppData\Local\GitHubDesktop\bin;C:\Users\18455\go\bin;C:\Program Files\JetBrains\DataGrip 2021.1\bin
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  14.15.3
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.npmjs.org/@vitejs%2fapp: Not found
+      at Request.params.callback [as _callback] (C:\Users\18455\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66988:18)
+      at Request.self.callback (C:\Users\18455\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140662:22)
+      at Request.emit (events.js:315:20)
+      at Request.<anonymous> (C:\Users\18455\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141634:10)
+      at Request.emit (events.js:315:20)
+      at IncomingMessage.<anonymous> (C:\Users\18455\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141556:12)
+      at Object.onceWrapper (events.js:421:28)
+      at IncomingMessage.emit (events.js:327:22)
+      at endReadableNT (internal/streams/readable.js:1327:12)
+      at processTicksAndRejections (internal/process/task_queues.js:80:21)
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
