@@ -1,5 +1,30 @@
-name: "gin-element-admin"
-mode: "dev"
-port: 8888
-version: "v0.0.1"
-start_time: "2020-05-27"
+system:
+  name: "gin-element-admin"
+  mode: "dev"
+  port: 8888
+  version: "v0.0.1"
+  start_time: "2020-05-27"
+mysql:
+  path: 127.0.0.1:3306
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  db-name: gea
+  username: root
+  password: LLiuHuan980724.
+  max-idle-conns: 0
+  max-open-conns: 0
+  log-mode: false
+  log-zap: ""
+redis:
+  db: 0
+  addr: 127.0.0.1:6379
+  password: ""
+zap:
+  level: info
+  format: console
+  prefix: '[GIN-VUE-ADMIN]'
+  directory: log
+  link-name: latest_log
+  showLine: true
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  log-in-console: true
