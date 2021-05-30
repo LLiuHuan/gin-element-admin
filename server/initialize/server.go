@@ -2,15 +2,15 @@ package initialize
 
 import (
 	"fmt"
+	"gin-element-admin/core"
 	"gin-element-admin/global"
 	"go.uber.org/zap"
-	"net/http"
 	"time"
 )
 
 func init() {
 	// 初始化Redis
-	Redis()
+	//Redis()
 }
 
 func RunServer() {
@@ -19,13 +19,7 @@ func RunServer() {
 
 	address := fmt.Sprintf(":%d", global.GEA_CONFIG.System.Port)
 	// 运行
-	s := &http.Server{
-		Addr:           address,
-		Handler:        router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-	}
+	s := core.InitServer(address, router)
 	time.Sleep(10 * time.Microsecond)
 
 	global.GEA_LOG.Info("服务启动成功，监听端口为：  ", zap.String("address", address))

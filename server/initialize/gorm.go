@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-//@author: SliverHorn
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: Gorm
 //@description: 初始化数据库并产生数据库全局变量
 //@return: *gorm.DB
@@ -24,7 +24,7 @@ func Gorm() *gorm.DB {
 	}
 }
 
-//@author: SliverHorn
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: GormMysql
 //@description: 初始化Mysql数据库
 //@return: *gorm.DB
@@ -56,7 +56,7 @@ func GormMysql() *gorm.DB {
 	}
 }
 
-//@author: SliverHorn
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: gormConfig
 //@description: 根据配置决定是否开启日志
 //@param: mod bool

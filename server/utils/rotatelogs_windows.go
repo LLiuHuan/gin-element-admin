@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: GetWriteSyncer
 //@description: zap logger 中加入 file-rotatelogs, 按照日期轮询创建日志（省的自己写了）
 //@return: zapcore.WriteSyncer, error
