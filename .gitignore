@@ -17,7 +17,8 @@
 go.sum
 /server/go.sum
 /server/log/
-/server/gva
+/server/gea
+/server/tmp
 /server/latest_log
 
 # Binaries for programs and plugins
