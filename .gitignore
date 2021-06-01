@@ -53,3 +53,4 @@ go.sum
 /web/*.local
 /web/.gitignore
 
+yarn-error.log

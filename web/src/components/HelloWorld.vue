@@ -1,6 +1,6 @@
 <template>
   <h1>{{ msg }}</h1>
-
+  <el-button>123</el-button>
   <p>
     Recommended IDE setup:
     <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
