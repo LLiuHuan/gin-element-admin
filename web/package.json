@@ -7,10 +7,12 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@types/node": "^15.12.0",
     "element-plus": "^1.0.2-beta.45",
     "less": "^4.1.1",
     "vue": "^3.0.5",
-    "vue-router": "^4.0.8"
+    "vue-router": "^4.0.8",
+    "vuex": "^4.0.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.2.2",
