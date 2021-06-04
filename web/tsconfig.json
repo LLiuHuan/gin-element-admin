@@ -19,8 +19,9 @@
     "src/**/*.tsx",
     "src/**/*.vue"
   ],
+  "baseUrl": ".",
   "paths": {
-    "@/*": [
+    "src/*": [
       "src/*"
     ],
     "@components/*": [

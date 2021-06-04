@@ -1,10 +1,11 @@
 system:
   name: "gin-element-admin"
-  mode: "dev"
+  mode: "debug"
   port: 8888
   version: "v0.0.1"
   start_time: "2020-05-27"
   env: ""
+  use-multipoint: false
 mysql:
   path: 127.0.0.1:3306
   config: charset=utf8mb4&parseTime=True&loc=Local
@@ -29,3 +30,12 @@ zap:
   encode-level: LowercaseColorLevelEncoder
   stacktrace-key: stacktrace
   log-in-console: true
+captcha:
+  noise-count: 10
+  img-width: 240
+  img-height: 80
+jwt:
+  signing-key: GEA-Signing-Key
+  access-expires-time: 2
+  refresh-expires-time: 12
+  buffer-time: 86400

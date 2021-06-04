@@ -36,10 +36,14 @@ export default defineConfig({
         })
     ],
     resolve: {
-        alias: [
-            {find: '@', replacement: path.resolve(__dirname, './src')},
-            {find: '@components', replacement: path.resolve(__dirname, './src/components')}
-        ]
+        // alias: [
+        //     {find: 'src', replacement: path.resolve(__dirname, '.')},
+        //     {find: '@components', replacement: path.resolve(__dirname, './src/components')}
+        // ]
+        alias: {
+            'src': path.resolve(__dirname, './src'),
+            '@components': path.resolve(__dirname, './src/components')
+        }
     },
     server: {},
     optimizeDeps: {

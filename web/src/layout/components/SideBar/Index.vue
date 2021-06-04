@@ -5,6 +5,9 @@
         default-active="2"
         class="el-menu-vertical-demo"
         :collapse="!isCollapse"
+        :unique-opened="true"
+        :router="true"
+        mode="vertical"
     >
       <el-submenu index="1">
         <template #title>
@@ -45,7 +48,7 @@ import { defineComponent, computed } from 'vue'
 // import { useStore } from '..'
 
 import SideLogo from './SideLogo.vue'
-import {useStore} from '@/store';
+import {useStore} from 'src/store';
 
 export default defineComponent({
   components: {

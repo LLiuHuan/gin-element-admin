@@ -1,7 +1,7 @@
 <template>
   <el-container class="layout">
     <el-container>
-      <el-aside width="200px">
+      <el-aside :class="{narrow: ''}">
         <side-bar/>
       </el-aside>
       <el-container>

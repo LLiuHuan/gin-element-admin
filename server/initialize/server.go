@@ -5,12 +5,21 @@ import (
 	"gin-element-admin/core"
 	"gin-element-admin/global"
 	"go.uber.org/zap"
+	"os"
 	"time"
 )
 
 func init() {
 	// 初始化Redis
 	//Redis()
+
+	// 初始化Validator翻译器
+	if err := InitTrans("zh"); err != nil {
+		fmt.Printf("init validator failed, err: %v\n", err)
+		global.GEA_LOG.Error("init validator failed, err", zap.Error(err))
+		os.Exit(0)
+		return
+	}
 }
 
 func RunServer() {
