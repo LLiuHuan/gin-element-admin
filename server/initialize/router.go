@@ -28,12 +28,13 @@ func Routers(mode string) *gin.Engine {
 	r.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	global.GEA_LOG.Info("register swagger handler")
 
-	PublicGroup := r.Group("")
+	PublicGroup := r.Group("/v1")
 	{
 		router.InitBaseRouter(PublicGroup)
 	}
 
 	PrivateGroupV1 := r.Group("/v1")
+	PrivateGroupV1.Use(middlewares.JWTAuto()).Use(middlewares.CasbinHandler())
 	{
 		PrivateGroupV1.GET("/ping", func(c *gin.Context) {
 			c.String(http.StatusOK, "pong")

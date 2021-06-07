@@ -49,8 +49,8 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 	j := middlewares.NewJWT() // 唯一签名
 
 	claims := request.CustomClaims{
-		UserInfo:   user,
-		BufferTime: global.GEA_CONFIG.JWT.BufferTime, // 缓冲时间1天 缓冲时间内会获得新的token刷新令牌 此时一个用户会存在两个有效令牌 但是前端只留一个 另一个会丢失
+		UserInfo: user,
+		//BufferTime: global.GEA_CONFIG.JWT.BufferTime, // 缓冲时间1天 缓冲时间内会获得新的token刷新令牌 此时一个用户会存在两个有效令牌 但是前端只留一个 另一个会丢失
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),                                                                         // 签名生效时间
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(global.GEA_CONFIG.JWT.AccessExpiresTime)).Unix(), // 过期时间 配置文件
@@ -58,7 +58,7 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 		},
 	}
 
-	accessToken, refreshToken, err := j.CreateToken(claims)
+	accessToken, err := j.CreateToken(claims)
 	if err != nil {
 		global.GEA_LOG.Error("获取token失败", zap.Any("err", err))
 		response.FailWithMessage("获取token失败", c)
@@ -68,10 +68,10 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 	// 多点登录
 	if !global.GEA_CONFIG.System.UseMultipoint {
 		response.OkWithDetailed(response.LoginResponse{
-			User:         user,
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-			ExpiresAt:    claims.StandardClaims.ExpiresAt,
+			User:        user,
+			AccessToken: accessToken,
+			//RefreshToken: refreshToken,
+			ExpiresAt: claims.StandardClaims.ExpiresAt,
 		}, "登录成功", c)
 		return
 	}
@@ -83,10 +83,10 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 			return
 		}
 		response.OkWithDetailed(response.LoginResponse{
-			User:         user,
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-			ExpiresAt:    claims.StandardClaims.ExpiresAt * 1000,
+			User:        user,
+			AccessToken: accessToken,
+			//RefreshToken: refreshToken,
+			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
 		}, "登录成功", c)
 	} else if err != nil {
 		global.GEA_LOG.Error("设置登录状态失败", zap.Any("err", err))
@@ -103,16 +103,16 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 			return
 		}
 		response.OkWithDetailed(response.LoginResponse{
-			User:         user,
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-			ExpiresAt:    claims.StandardClaims.ExpiresAt * 1000,
+			User:        user,
+			AccessToken: accessToken,
+			//RefreshToken: refreshToken,
+			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
 		}, "登录成功", c)
 	}
 }
 
 func Test(c *gin.Context) {
-	token := c.Request.Header.Get("access-token")
+	token := c.Request.Header.Get("Authorization")
 	j := middlewares.NewJWT()
 
 	parse, err := j.ParseToken(token)

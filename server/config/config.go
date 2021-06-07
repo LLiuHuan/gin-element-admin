@@ -8,4 +8,5 @@ type Server struct {
 	Redis   Redis   `mapstructure:"redis" json:"redis" yaml:"redis"`
 	Captcha Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 	JWT     JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	Casbin  Casbin  `mapstructure:"casbin" json:"casbin" yaml:"casbin"`
 }

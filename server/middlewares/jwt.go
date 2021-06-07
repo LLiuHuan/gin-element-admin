@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"errors"
+	"fmt"
 	"gin-element-admin/global"
 	"gin-element-admin/model"
 	"gin-element-admin/model/request"
@@ -10,7 +11,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"strconv"
+	"strings"
 	"time"
 )
 
@@ -34,16 +35,16 @@ func NewJWT() *JWT {
 }
 
 // CreateToken 创建token
-func (j *JWT) CreateToken(claims request.CustomClaims) (accessToken, refreshToken string, err error) {
+func (j *JWT) CreateToken(claims request.CustomClaims) (accessToken string, err error) {
 	// access_token 短token
 	// refresh_token 长token
 
 	if claims.RefreshToken == "" {
-		refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(global.GEA_CONFIG.JWT.RefreshExpiresTime)).Unix(),
 		}).SignedString(j.SigningKey)
 		if err != nil {
-			return
+			return "", err
 		}
 		claims.RefreshToken = refreshToken
 	}
@@ -86,13 +87,13 @@ func (j *JWT) ParseToken(accessToken string) (*request.CustomClaims, error) {
 }
 
 // RefreshToken 更新token
-func (j *JWT) RefreshToken(accessToken string) (newAccessToken string, newRefreshToken string, err error) {
+func (j *JWT) RefreshToken(accessToken string) (newAccessToken string, err error) {
 	// 获取accessToken的数据
-	claims, err := j.ParseToken(accessToken)
-	if err != nil {
-		err = TokenInvalid
-		return
-	}
+	//claims, err := j.ParseToken(accessToken)
+	var claims request.CustomClaims
+	_, parseErr := jwt.ParseWithClaims(accessToken, &claims, func(*jwt.Token) (interface{}, error) {
+		return j.SigningKey, nil
+	})
 	// RefreshToken 过期
 	if _, err = jwt.Parse(claims.RefreshToken, func(token *jwt.Token) (interface{}, error) {
 		return j.SigningKey, nil
@@ -100,18 +101,28 @@ func (j *JWT) RefreshToken(accessToken string) (newAccessToken string, newRefres
 		return
 	}
 
-	jwt.TimeFunc = func() time.Time {
-		return time.Unix(0, 0)
+	if v, _ := parseErr.(*jwt.ValidationError); v.Errors == jwt.ValidationErrorExpired {
+		jwt.TimeFunc = func() time.Time {
+			return time.Unix(0, 0)
+		}
+		// 刷新AccessToken
+		jwt.TimeFunc = time.Now
+		claims.StandardClaims.ExpiresAt = time.Now().Add(time.Hour * time.Duration(global.GEA_CONFIG.JWT.AccessExpiresTime)).Unix()
+		return j.CreateToken(claims)
 	}
-	// 刷新AccessToken
-	jwt.TimeFunc = time.Now
-	claims.StandardClaims.ExpiresAt = time.Now().Add(time.Hour * time.Duration(global.GEA_CONFIG.JWT.RefreshExpiresTime)).Unix()
-	return j.CreateToken(*claims)
+	return accessToken, nil
 }
 
 func JWTAuto() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.Request.Header.Get("access-token")
+		authHeader := c.Request.Header.Get("Authorization")
+		parts := strings.SplitN(authHeader, " ", 2)
+		if !(len(parts) == 2 && parts[0] == "Bearer") {
+			response.FailWithMessage("请求头中auth格式有误", c)
+			c.Abort()
+			return
+		}
+		token := parts[1]
 		if token == "" {
 			response.FailWithDetailed(gin.H{"reload": true}, "未登录或非法访问", c)
 			c.Abort()
@@ -126,44 +137,62 @@ func JWTAuto() gin.HandlerFunc {
 		// parseToken 解析token包含的信息
 		claims, err := j.ParseToken(token)
 		if err != nil {
+			fmt.Println("token 授权已过期")
 			if err == TokenExpired {
-				response.FailWithDetailed(gin.H{"reload": true}, "授权已过期", c)
+				accessToken, _ := j.RefreshToken(token)
+				if accessToken == "" {
+					response.FailWithDetailed(gin.H{"reload": true}, "授权已过期", c)
+					c.Abort()
+					return
+				}
+				c.Header("Authorization", "Bearer "+accessToken)
+				newClaims, _ := j.ParseToken(accessToken)
+
+				// TODO: 看看到时候把这里去掉，有点浪费时间
+				if err, _ = service.FindUserByUuid(newClaims.UserInfo.UUID.String()); err != nil {
+					_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: token})
+					response.FailWithDetailed(gin.H{"reload": true}, err.Error(), c)
+					c.Abort()
+				}
+
+				if global.GEA_CONFIG.System.UseMultipoint {
+					err, RedisJwtToken := service.GetRedisJWT(newClaims.UserInfo.Username)
+					if err != nil {
+						global.GEA_LOG.Error("get redis jwt failed", zap.Any("err", err))
+					} else { // 当之前的取成功时才进行拉黑操作
+						_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: RedisJwtToken})
+					}
+					// 无论如何都要记录当前的活跃状态
+					_ = service.SetRedisJWT(accessToken, newClaims.UserInfo.Username)
+				}
+				c.Set("claims", newClaims)
+				c.Next()
+			} else {
+				response.FailWithDetailed(gin.H{"reload": true}, err.Error(), c)
 				c.Abort()
 				return
 			}
-			response.FailWithDetailed(gin.H{"reload": true}, err.Error(), c)
-			c.Abort()
-			return
-		}
-		// TODO: 看看到时候把这里去掉，有点浪费时间
-		if err, _ = service.FindUserByUuid(claims.UserInfo.UUID.String()); err != nil {
-			_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: token})
-			response.FailWithDetailed(gin.H{"reload": true}, err.Error(), c)
-			c.Abort()
-		}
-		if time.Now().Unix() >= claims.ExpiresAt {
-			claims.ExpiresAt = time.Now().Add(time.Hour * time.Duration(global.GEA_CONFIG.JWT.AccessExpiresTime)).Unix()
-			accessToken, _, _ := j.CreateToken(*claims)
-			if accessToken == "" {
-				response.FailWithDetailed(gin.H{"reload": true}, "授权已过期", c)
+		} else {
+			fmt.Println("token 授权未过期")
+			// TODO: 看看到时候把这里去掉，有点浪费时间
+			if err, _ = service.FindUserByUuid(claims.UserInfo.UUID.String()); err != nil {
+				_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: token})
+				response.FailWithDetailed(gin.H{"reload": true}, err.Error(), c)
 				c.Abort()
-				return
 			}
-			newClaims, _ := j.ParseToken(accessToken)
-			c.Header("access-token", accessToken)
-			c.Header("new-expires-at", strconv.FormatInt(newClaims.ExpiresAt, 10))
+
 			if global.GEA_CONFIG.System.UseMultipoint {
-				err, RedisJwtToken := service.GetRedisJWT(newClaims.UserInfo.Username)
+				err, RedisJwtToken := service.GetRedisJWT(claims.UserInfo.Username)
 				if err != nil {
 					global.GEA_LOG.Error("get redis jwt failed", zap.Any("err", err))
 				} else { // 当之前的取成功时才进行拉黑操作
 					_ = service.JsonInBlacklist(model.JwtBlacklist{Jwt: RedisJwtToken})
 				}
 				// 无论如何都要记录当前的活跃状态
-				_ = service.SetRedisJWT(accessToken, newClaims.UserInfo.Username)
+				_ = service.SetRedisJWT(token, claims.UserInfo.Username)
 			}
+			c.Set("claims", claims)
+			c.Next()
 		}
-		c.Set("claims", claims)
-		c.Next()
 	}
 }
