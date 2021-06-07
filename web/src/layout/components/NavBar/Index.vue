@@ -10,8 +10,8 @@
 
 <script lang="ts">
 import {defineComponent, computed, toRefs, reactive} from 'vue'
-import Hamburger from '@components/Hamburger/Index.vue'
-import { useStore } from 'src/store'
+import Hamburger from '../../../components/Hamburger/Index.vue'
+import { useStore } from '../../../store'
 import {AppActionTypes} from "../../../store/app/action-types";
 
 export default defineComponent({

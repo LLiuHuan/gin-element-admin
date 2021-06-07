@@ -48,7 +48,7 @@ import { defineComponent, computed } from 'vue'
 // import { useStore } from '..'
 
 import SideLogo from './SideLogo.vue'
-import {useStore} from 'src/store';
+import {useStore} from '../../../store';
 
 export default defineComponent({
   components: {
@@ -74,6 +74,19 @@ export default defineComponent({
 
 <style lang="scss">
 .scrollbar-menu {
+  height: 90%;
   overflow-x: hidden !important;
+}
+
+.el-scrollbar__thumb {
+  position: relative;
+  display: block;
+  width: 0;
+  height: 0;
+  cursor: pointer;
+  border-radius: inherit;
+  background-color: rgba(144,147,153,.3);
+  -webkit-transition: .3s background-color;
+  transition: .3s background-color;
 }
 </style>

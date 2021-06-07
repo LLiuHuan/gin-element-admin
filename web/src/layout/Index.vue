@@ -1,7 +1,7 @@
 <template>
   <el-container class="layout">
     <el-container>
-      <el-aside :class="{narrow: ''}">
+      <el-aside :width="!isCollapse ? '64px' : '300px'" style="padding: 0;transition: width .38s;margin-bottom: 0;">
         <side-bar/>
       </el-aside>
       <el-container>
@@ -18,7 +18,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue'
+import {computed, defineComponent} from 'vue'
+import {useStore} from '../store';
 
 import SideBar from './components/SideBar/Index.vue'
 import NavBar from './components/NavBar/Index.vue'
@@ -29,8 +30,18 @@ export default defineComponent({
     NavBar,
   },
   setup() {
+    const store = useStore()
 
-    return {}
+    const sidebar = computed(() => {
+      return store.state.app.sidebar
+    })
+
+    const isCollapse = computed(() => {
+      return sidebar.value.opened
+    })
+    return {
+      isCollapse
+    }
   }
 })
 </script>
@@ -39,4 +50,14 @@ export default defineComponent({
 .main {
   //height: 100%;
 }
+
+.layout {
+  height: 100%;
+}
+
+.narrow {
+  width: 80px !important;
+}
+
+
 </style>

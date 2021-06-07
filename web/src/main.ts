@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import {loadAllPlugins} from './plugins'
+import './styles/index.scss'
 
 import { store } from './store'
 
