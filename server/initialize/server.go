@@ -11,7 +11,10 @@ import (
 
 func init() {
 	// 初始化Redis
-	//Redis()
+	if global.GEA_CONFIG.System.UseMultipoint {
+		// 初始化redis服务
+		Redis()
+	}
 
 	// 初始化Validator翻译器
 	if err := InitTrans("zh"); err != nil {
