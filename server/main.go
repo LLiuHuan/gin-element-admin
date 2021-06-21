@@ -18,4 +18,7 @@ func main() {
 		db, _ := global.GEA_DB.DB()
 		defer db.Close()
 	}
+
+	// 优雅关机
+	//initialize.Close(s)
 }

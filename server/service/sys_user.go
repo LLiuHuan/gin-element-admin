@@ -4,7 +4,10 @@ import (
 	"errors"
 	"gin-element-admin/global"
 	"gin-element-admin/model"
+	"gin-element-admin/model/request"
 	"gin-element-admin/utils"
+	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 // Login 用户登录
@@ -32,4 +35,85 @@ func FindUserByUuid(uuid string) (err error, user *model.SysUser) {
 		return errors.New("用户不存在"), &u
 	}
 	return nil, &u
+}
+
+// Register 用户注册
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
+//@function: Register
+//@description: 用户注册
+//@param: u model.SysUser
+//@return: err error, userInter model.SysUser
+func Register(u model.SysUser) (err error, userInter model.SysUser) {
+	var user model.SysUser
+	if !errors.Is(global.GEA_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) { // 判断用户名是否注册
+		return errors.New("用户名已注册"), userInter
+	}
+	// 否则 附加uuid 密码md5简单加密 注册
+	u.Password = utils.MD5V([]byte(u.Password))
+	u.UUID = uuid.NewV4()
+	err = global.GEA_DB.Create(&u).Error
+	return err, u
+}
+
+// ChangePassword 修改用户密码
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
+//@function: ChangePassword
+//@description: 修改用户密码
+//@param: u *model.SysUser, newPassword string
+//@return: err error, userInter *model.SysUser
+func ChangePassword(u *model.SysUser, newPassword string) (err error, userInter *model.SysUser) {
+	var user model.SysUser
+	u.Password = utils.MD5V([]byte(u.Password))
+	err = global.GEA_DB.Where("username = ? AND password = ?", u.Username, u.Password).First(&user).Update("password", utils.MD5V([]byte(newPassword))).Error
+	return err, u
+}
+
+// DeleteUser 删除用户
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
+//@function: DeleteUser
+//@description: 删除用户
+//@param: id float64
+//@return: err error
+func DeleteUser(id float64) (err error) {
+	var user model.SysUser
+	err = global.GEA_DB.Where("id = ?", id).Delete(&user).Error
+	return err
+}
+
+// SetUserAuthority 设置一个用户的权限
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
+//@function: SetUserAuthority
+//@description: 设置一个用户的权限
+//@param: uuid uuid.UUID, authorityId string
+//@return: err error
+func SetUserAuthority(uuid uuid.UUID, authorityId string) (err error) {
+	err = global.GEA_DB.Where("uuid = ?", uuid).First(&model.SysUser{}).Update("authority_id", authorityId).Error
+	return err
+}
+
+// SetUserInfo 设置用户信息
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
+//@function: SetUserInfo
+//@description: 设置用户信息
+//@param: reqUser model.SysUser
+//@return: err error, user model.SysUser
+func SetUserInfo(reqUser model.SysUser) (err error, user model.SysUser) {
+	err = global.GEA_DB.Updates(&reqUser).Error
+	return err, reqUser
+}
+
+// GetUserInfoList 分页获取数据
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
+//@function: GetUserInfoList
+//@description: 分页获取数据
+//@param: info request.PageInfo
+//@return: err error, list interface{}, total int64
+func GetUserInfoList(info request.PageInfo) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	db := global.GEA_DB.Model(&model.SysUser{})
+	var userList []model.SysUser
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Preload("Authority").Find(&userList).Error
+	return err, userList, total
 }

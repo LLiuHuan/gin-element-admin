@@ -32,7 +32,7 @@ func GetServerInfo() (server *utils.Server, err error) {
 }
 
 // GetSystemConfig 读取配置文件
-//@author: [piexlmax](https://github.com/piexlmax)
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: GetSystemConfig
 //@description: 读取配置文件
 //@return: err error, conf config.Server

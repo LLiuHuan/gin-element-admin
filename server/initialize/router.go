@@ -40,6 +40,7 @@ func Routers(mode string) *gin.Engine {
 			c.String(http.StatusOK, "pong")
 		})
 		router.InitSystemRouter(PrivateGroupV1)
+		router.InitUserRouter(PrivateGroupV1)
 	}
 
 	r.NoRoute(func(c *gin.Context) {

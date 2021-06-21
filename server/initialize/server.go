@@ -5,6 +5,7 @@ import (
 	"gin-element-admin/core"
 	"gin-element-admin/global"
 	"go.uber.org/zap"
+	"net/http"
 	"os"
 	"time"
 )
@@ -25,7 +26,7 @@ func init() {
 	}
 }
 
-func RunServer() {
+func RunServer() *http.Server {
 	// 注册路由
 	router := Routers(global.GEA_CONFIG.System.Mode)
 
@@ -44,7 +45,8 @@ func RunServer() {
 	`, address)
 	fmt.Println()
 
-	global.GEA_LOG.Error(s.ListenAndServe().Error())
-
+	//global.GEA_LOG.Error(s.ListenAndServe().Error())
+	//fmt.Println("33333333333333333")
 	Close(s)
+	return s
 }

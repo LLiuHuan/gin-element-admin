@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"context"
+	"fmt"
 	"gin-element-admin/global"
 	"go.uber.org/zap"
 	"net/http"
@@ -18,6 +19,7 @@ func Close(s *http.Server) {
 		// 开启一个goroutine启动服务
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			global.GEA_LOG.Fatal("listen", zap.Error(err))
+			fmt.Println("listen: ", "关机")
 		}
 	}()
 

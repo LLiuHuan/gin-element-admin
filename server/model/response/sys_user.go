@@ -8,3 +8,7 @@ type LoginResponse struct {
 	//RefreshToken string        `json:"refresh_token"`
 	ExpiresAt int64 `json:"expiresAt"`
 }
+
+type SysUserResponse struct {
+	User model.SysUser `json:"user"`
+}

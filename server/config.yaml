@@ -33,7 +33,7 @@ system:
 zap:
   level: info
   format: console
-  prefix: '[GIN-VUE-ADMIN]'
+  prefix: '[GIN-ELEMENT-ADMIN]'
   directory: log
   link-name: latest_log
   showLine: true
