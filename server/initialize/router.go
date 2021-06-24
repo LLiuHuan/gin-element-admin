@@ -6,6 +6,7 @@ import (
 	"gin-element-admin/router"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 
 	gs "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -22,6 +23,8 @@ func Routers(mode string) *gin.Engine {
 	global.GEA_LOG.Info("use middleware logger")
 	// 跨域
 	r.Use(middlewares.Cors())
+	// 令牌桶
+	r.Use(middlewares.RateLimitMiddleware(time.Second, 100, 100))
 
 	global.GEA_LOG.Info("use middleware cors")
 	// swagger 文档
