@@ -10,9 +10,10 @@ import (
 	"time"
 )
 
-func init() {
+func RunServer() *http.Server {
+
 	// 初始化Redis
-	if global.GEA_CONFIG.System.UseMultipoint {
+	if global.GEA_CONFIG.System.UseMultipoint || global.GEA_CONFIG.RateLimit.IpVerify {
 		// 初始化redis服务
 		Redis()
 	}
@@ -22,11 +23,8 @@ func init() {
 		fmt.Printf("init validator failed, err: %v\n", err)
 		global.GEA_LOG.Error("init validator failed, err", zap.Error(err))
 		os.Exit(0)
-		return
 	}
-}
 
-func RunServer() *http.Server {
 	// 注册路由
 	router := Routers(global.GEA_CONFIG.System.Mode)
 

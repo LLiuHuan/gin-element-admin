@@ -23,8 +23,13 @@ func Routers(mode string) *gin.Engine {
 	global.GEA_LOG.Info("use middleware logger")
 	// 跨域
 	r.Use(middlewares.Cors())
-	// 令牌桶
-	r.Use(middlewares.RateLimitMiddleware(time.Second, 100, 100))
+
+	// 令牌桶 限流
+	r.Use(middlewares.RateLimitMiddleware(time.Second))
+	// IP 限流
+	if global.GEA_CONFIG.RateLimit.IpVerify {
+		r.Use(middlewares.IpVerifyMiddleware())
+	}
 
 	global.GEA_LOG.Info("use middleware cors")
 	// swagger 文档

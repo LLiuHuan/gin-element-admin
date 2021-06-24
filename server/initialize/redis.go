@@ -1,12 +1,14 @@
 package initialize
 
 import (
+	"fmt"
 	"gin-element-admin/global"
 	"github.com/go-redis/redis"
 	"go.uber.org/zap"
 )
 
 func Redis() {
+	fmt.Println("初始化Redis")
 	redisCfg := global.GEA_CONFIG.Redis
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisCfg.Addr,

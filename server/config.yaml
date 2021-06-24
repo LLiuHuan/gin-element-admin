@@ -40,3 +40,9 @@ zap:
   encode-level: LowercaseColorLevelEncoder
   stacktrace-key: stacktrace
   log-in-console: true
+rate-limit:
+  ip-verify: true
+  ip-limit-con: 10
+  ip-list-key: blackListKey
+  cap: 100
+  quantum: 100
