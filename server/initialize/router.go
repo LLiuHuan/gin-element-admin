@@ -50,6 +50,7 @@ func Routers(mode string) *gin.Engine {
 		router.InitSystemRouter(PrivateGroupV1)    // system相关路由
 		router.InitUserRouter(PrivateGroupV1)      // 用户相关路由
 		router.InitAuthorityRouter(PrivateGroupV1) // 角色相关路由
+		router.InitApiRouter(PrivateGroupV1)       // Api相关路由
 	}
 
 	r.NoRoute(func(c *gin.Context) {
