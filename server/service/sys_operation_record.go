@@ -17,45 +17,45 @@ func CreateSysOperationRecord(sysOperationRecord model.SysOperationRecord) (err 
 	return err
 }
 
+// DeleteSysOperationRecordByIds 批量删除记录
 //@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: DeleteSysOperationRecordByIds
 //@description: 批量删除记录
 //@param: ids request.IdsReq
 //@return: err error
-
 func DeleteSysOperationRecordByIds(ids request.IdsReq) (err error) {
 	err = global.GEA_DB.Delete(&[]model.SysOperationRecord{}, "id in (?)", ids.Ids).Error
 	return err
 }
 
+// DeleteSysOperationRecord 删除操作记录
 //@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: DeleteSysOperationRecord
 //@description: 删除操作记录
 //@param: sysOperationRecord model.SysOperationRecord
 //@return: err error
-
 func DeleteSysOperationRecord(sysOperationRecord model.SysOperationRecord) (err error) {
 	err = global.GEA_DB.Delete(&sysOperationRecord).Error
 	return err
 }
 
+// GetSysOperationRecord 根据id获取单条操作记录
 //@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: DeleteSysOperationRecord
 //@description: 根据id获取单条操作记录
 //@param: id uint
 //@return: err error, sysOperationRecord model.SysOperationRecord
-
 func GetSysOperationRecord(id uint) (err error, sysOperationRecord model.SysOperationRecord) {
 	err = global.GEA_DB.Where("id = ?", id).First(&sysOperationRecord).Error
 	return
 }
 
+// GetSysOperationRecordInfoList 分页获取操作记录列表
 //@author: [LLiuHuan](https://github.com/LLiuHuan)
 //@function: GetSysOperationRecordInfoList
 //@description: 分页获取操作记录列表
 //@param: info request.SysOperationRecordSearch
 //@return: err error, list interface{}, total int64
-
 func GetSysOperationRecordInfoList(info request.SysOperationRecordSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
