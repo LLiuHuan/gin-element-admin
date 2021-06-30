@@ -4,9 +4,10 @@ import (
 	"gin-element-admin/global"
 	"gin-element-admin/middlewares"
 	"gin-element-admin/router"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	gs "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -47,10 +48,11 @@ func Routers(mode string) *gin.Engine {
 		PrivateGroupV1.GET("/ping", func(c *gin.Context) {
 			c.String(http.StatusOK, "pong")
 		})
+		router.InitApiRouter(PrivateGroupV1)       // Api相关路由
+		router.InitAuthorityRouter(PrivateGroupV1) // 角色相关路由
+		router.InitCasbinRouter(PrivateGroupV1)    // 权限相关路由
 		router.InitSystemRouter(PrivateGroupV1)    // system相关路由
 		router.InitUserRouter(PrivateGroupV1)      // 用户相关路由
-		router.InitAuthorityRouter(PrivateGroupV1) // 角色相关路由
-		router.InitApiRouter(PrivateGroupV1)       // Api相关路由
 	}
 
 	r.NoRoute(func(c *gin.Context) {

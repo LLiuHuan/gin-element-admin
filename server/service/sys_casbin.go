@@ -1,13 +1,16 @@
 package service
 
 import (
+	"errors"
 	"gin-element-admin/global"
 	"gin-element-admin/model"
+	"gin-element-admin/model/request"
+	"strings"
+
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/util"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	_ "github.com/go-sql-driver/mysql"
-	"strings"
 )
 
 // Casbin 持久化到数据库  引入自定义规则
@@ -73,3 +76,51 @@ func UpdateCasbinApi(oldPath string, newPath string, oldMethod string, newMethod
 	}).Error
 	return err
 }
+
+// region API需要
+
+// UpdateCasbin 更新casbin权限
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
+//@function: UpdateCasbin
+//@description: 更新casbin权限
+//@param: authorityId string, casbinInfos []request.CasbinInfo
+//@return: error
+func UpdateCasbin(authorityId string, casbinInfos []request.CasbinInfo) error {
+	ClearCasbin(0, authorityId)
+	rules := [][]string{}
+	for _, v := range casbinInfos {
+		cm := model.CasbinModel{
+			Ptype:       "p",
+			AuthorityId: authorityId,
+			Path:        v.Path,
+			Method:      v.Method,
+		}
+		rules = append(rules, []string{cm.AuthorityId, cm.Path, cm.Method})
+	}
+	e := Casbin()
+	success, _ := e.AddPolicies(rules)
+	if success == false {
+		return errors.New("存在相同api,添加失败,请联系管理员")
+	}
+	return nil
+}
+
+// GetPolicyPathByAuthorityId 获取权限列表
+//@author: [LLiuHuan](https://github.com/LLiuHuan)
+//@function: GetPolicyPathByAuthorityId
+//@description: 获取权限列表
+//@param: authorityId string
+//@return: pathMaps []request.CasbinInfo
+func GetPolicyPathByAuthorityId(authorityId string) (pathMaps []request.CasbinInfo) {
+	e := Casbin()
+	list := e.GetFilteredPolicy(0, authorityId)
+	for _, v := range list {
+		pathMaps = append(pathMaps, request.CasbinInfo{
+			Path:   v[1],
+			Method: v[2],
+		})
+	}
+	return pathMaps
+}
+
+// endregion
