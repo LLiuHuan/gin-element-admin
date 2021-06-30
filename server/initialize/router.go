@@ -47,8 +47,9 @@ func Routers(mode string) *gin.Engine {
 		PrivateGroupV1.GET("/ping", func(c *gin.Context) {
 			c.String(http.StatusOK, "pong")
 		})
-		router.InitSystemRouter(PrivateGroupV1)
-		router.InitUserRouter(PrivateGroupV1)
+		router.InitSystemRouter(PrivateGroupV1)    // system相关路由
+		router.InitUserRouter(PrivateGroupV1)      // 用户相关路由
+		router.InitAuthorityRouter(PrivateGroupV1) // 角色相关路由
 	}
 
 	r.NoRoute(func(c *gin.Context) {
