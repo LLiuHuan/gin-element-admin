@@ -8,11 +8,12 @@ import (
 	"gin-element-admin/model/response"
 	"gin-element-admin/service"
 	"gin-element-admin/utils"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"go.uber.org/zap"
-	"time"
 )
 
 // Login 登录方法
@@ -263,10 +264,10 @@ func SetUserInfo(c *gin.Context) {
 // @Produce application/json
 // @Param data body request.PageInfo true "页码, 每页大小"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /user/getUserList [post]
+// @Router /user/getUserList [get]
 func GetUserList(c *gin.Context) {
 	var pageInfo request.PageInfo
-	if errStr, err := utils.BaseValidator(&pageInfo, c); err != nil {
+	if errStr, err := utils.BaseValidatorQuery(&pageInfo, c); err != nil {
 		response.FailWithMessage(errStr, c)
 		return
 	}

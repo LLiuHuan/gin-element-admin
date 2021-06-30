@@ -42,10 +42,10 @@ func UpdateCasbin(c *gin.Context) {
 // @Produce application/json
 // @Param data body request.CasbinInReceive true "权限id, 权限模型列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /casbin/getPolicyPathByAuthorityId [post]
+// @Router /casbin/getPolicyPathByAuthorityId [get]
 func GetPolicyPathByAuthorityId(c *gin.Context) {
 	var casbin request.CasbinInReceive
-	if errStr, err := utils.BaseValidator(&casbin, c); err != nil {
+	if errStr, err := utils.BaseValidatorQuery(&casbin, c); err != nil {
 		response.FailWithMessage(errStr, c)
 		return
 	}

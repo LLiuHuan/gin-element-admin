@@ -7,6 +7,7 @@ import (
 	"gin-element-admin/model/response"
 	"gin-element-admin/service"
 	"gin-element-admin/utils"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -66,10 +67,10 @@ func DeleteApi(c *gin.Context) {
 // @Produce application/json
 // @Param data body request.SearchApiParams true "分页获取API列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /api/getApiList [post]
+// @Router /api/getApiList [get]
 func GetApiList(c *gin.Context) {
 	var pageInfo request.SearchApiParams
-	if errStr, err := utils.BaseValidator(&pageInfo, c); err != nil {
+	if errStr, err := utils.BaseValidatorQuery(&pageInfo, c); err != nil {
 		response.FailWithMessage(errStr, c)
 		return
 	}
@@ -94,10 +95,10 @@ func GetApiList(c *gin.Context) {
 // @Produce application/json
 // @Param data body request.GetById true "根据id获取api"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /api/getApiById [post]
+// @Router /api/getApiById [get]
 func GetApiById(c *gin.Context) {
 	var idInfo request.GetById
-	if errStr, err := utils.BaseValidator(&idInfo, c); err != nil {
+	if errStr, err := utils.BaseValidatorQuery(&idInfo, c); err != nil {
 		response.FailWithMessage(errStr, c)
 		return
 	}
@@ -140,7 +141,7 @@ func UpdateApi(c *gin.Context) {
 // @accept application/json
 // @Produce application/json
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /api/getAllApis [post]
+// @Router /api/getAllApis [get]
 func GetAllApis(c *gin.Context) {
 	if err, apis := service.GetAllApis(); err != nil {
 		global.GEA_LOG.Error("获取失败!", zap.Any("err", err))
