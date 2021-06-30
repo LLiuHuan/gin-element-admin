@@ -3,7 +3,7 @@ captcha:
   img-width: 240
   img-height: 80
 casbin:
-  model-path: ./resource/rbac_model.conf
+  model-path: ./rbac_model.conf
 jwt:
   signing-key: GEA-Signing-Key
   access-expires-time: 2
