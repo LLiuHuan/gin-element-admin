@@ -16,11 +16,22 @@ import {
     ElMenuItemGroup,
     ElSubmenu,
     ElScrollbar,
+    ElForm,
+    ElFormItem,
+    ElInput,
+    ElCol,
+    ElRow,
 } from 'element-plus'
 
 // import {componentStore} from '@/store'
 
 export default function setupElement(app: any) {
+    app.component(ElRow.name, ElRow)
+    app.component(ElCol.name, ElCol)
+    app.component(ElInput.name, ElInput)
+    app.component(ElFormItem.name, ElFormItem)
+    app.component(ElForm.name, ElForm)
+
     app.component(ElButton.name, ElButton)
     app.component(ElContainer.name, ElContainer)
     app.component(ElAside.name, ElAside)
