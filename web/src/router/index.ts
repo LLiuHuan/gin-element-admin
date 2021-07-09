@@ -34,7 +34,23 @@ const baseRouters: Array<RouteRecordRaw> = [
     },
     {
         path: '/',
-        redirect: '/dashboard1'
+        component: Layout,
+        redirect: '/dashboard',
+        children: [{
+            path: 'dashboard',
+            component: () => import(/* webpackChunkName: "redirect" */ '../views/dashboard/Index.vue'),
+            name: 'dashboard',
+            meta: {
+                title: 'dashboard'
+            }
+        },{
+            path: 'about',
+            component: () => import(/* webpackChunkName: "redirect" */ '../views/about/Index.vue'),
+            name: 'about',
+            meta: {
+                title: 'about'
+            }
+        }]
     },
     {
         path: '/login',

@@ -2,60 +2,42 @@
   <side-logo/>
   <el-scrollbar class="scrollbar-menu">
     <el-menu
-        default-active="2"
+        :default-active="default_menu"
         class="el-menu-vertical-demo"
         :collapse="!isCollapse"
         :unique-opened="true"
         :router="true"
         mode="vertical"
     >
-      <el-submenu index="1">
-        <template #title>
-          <i class="el-icon-location"></i>
-          <span>导航一</span>
-        </template>
-        <el-menu-item-group>
-          <template #title>分组一</template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="1-4">
-          <template #title>选项4</template>
-          <el-menu-item index="1-4-1">选项1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-      <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-        <template #title>导航二</template>
-      </el-menu-item>
-      <el-menu-item index="3" disabled>
-        <i class="el-icon-document"></i>
-        <template #title>导航三</template>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <i class="el-icon-setting"></i>
-        <template #title>导航四</template>
-      </el-menu-item>
+      <SideItem
+          v-for="data in menus"
+          :data="data"
+      />
     </el-menu>
   </el-scrollbar>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, reactive, ref, toRefs } from 'vue'
 // import { useStore } from '..'
 
-import SideLogo from './SideLogo.vue'
+import SideLogo from './SideBarLogo.vue'
 import {useStore} from '../../../store';
+import {getMenu} from "../../../apis/login";
+import SideItem from './SideBarItem.vue'
+import {menuObject} from '../../../model/menuModel'
 
 export default defineComponent({
   components: {
-    SideLogo
+    SideLogo,
+    SideItem
   },
   setup () {
     const store = useStore()
+    const state = reactive({
+      menus: ref(),
+      default_menu: ref(1)
+    })
 
     const sidebar = computed(() => {
       return store.state.app.sidebar
@@ -65,8 +47,18 @@ export default defineComponent({
       return sidebar.value.opened
     })
 
+    getMenu().then((res: any) => {
+      state.menus = res.data.menus
+      for (let i = 0; i < res.data.menus.length; i++) {
+        if (res.data.menus[i].meta.default_menu) {
+          state.default_menu = res.data.menus[i].ID;
+        }
+      }
+    })
+
     return {
-      isCollapse
+      isCollapse,
+      ...toRefs(state),
     }
   }
 })

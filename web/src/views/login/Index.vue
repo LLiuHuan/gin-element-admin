@@ -122,6 +122,7 @@ import {useRoute, useRouter, LocationQuery} from 'vue-router'
 import router from '../../router'
 import {store} from "../../store";
 import {UserMutationTypes} from "../../store/user/mutation-types";
+import {setToken} from "../../utils/cookies";
 
 export default defineComponent({
   name: '',
@@ -143,8 +144,6 @@ export default defineComponent({
     }
 
     watch(useRoute(), current => {
-      console.log(current.query)
-      console.log(1111)
       if (current.query) {
         state.redirect = current.query.redirect?.toString() ?? ''
         state.otherQuery = getOtherQuery(current.query)
@@ -203,7 +202,9 @@ export default defineComponent({
         pass: [
           {required: true, message: '请输入密码', trigger: 'blur'},
         ]
-      }
+      },
+      redirect: '',
+      otherQuery: {}
     })
 
     // region 注册方法
@@ -217,22 +218,28 @@ export default defineComponent({
     const signInClick = () => {
       // router.push('/dashboard1')
       // 整合数据
-      let opt = {
-        username: state.signInData.name,
-        password: state.signInData.pass,
-        captcha: state.signInData.captcha.code,
-        captchaId: state.signInData.captcha.captchaId,
-      }
-      login(opt).then((res: any) => {
-        if (res.code === 0) {
-          ElMessage.success("登录成功！")
-          refreshCaptcha()
-          router.push({'path': '/redirect?dashboard1'}).catch(err => {
-            console.warn(err)
+      (signInRef.value as any).validate(async (valid: boolean) => {
+        if (valid) {
+          let opt = {
+            username: state.signInData.name,
+            password: state.signInData.pass,
+            captcha: state.signInData.captcha.code,
+            captchaId: state.signInData.captcha.captchaId,
+          }
+          login(opt).then((res: any) => {
+            if (res.code === 0) {
+              ElMessage.success("登录成功！")
+              refreshCaptcha()
+              router.push({path: state.redirect || '/', query: state.otherQuery}).catch(err => {
+                console.warn(err)
+              })
+              store.commit(UserMutationTypes.SET_TOKEN, res.data.access_token)
+              setToken(res.data.access_token)
+              // console.log(res.data.access_token)
+            } else {
+              ElMessage.error(res.msg)
+            }
           })
-          store.commit(UserMutationTypes.SET_TOKEN, res.data.access_token)
-        } else {
-          ElMessage.error(res.msg)
         }
       })
     }
@@ -242,6 +249,7 @@ export default defineComponent({
     // region 公共方法
     const setActive = () => {
       state.active = !state.active
+      refreshCaptcha()
     }
 
     const refreshCaptcha = () => {

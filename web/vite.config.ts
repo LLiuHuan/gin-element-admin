@@ -45,7 +45,9 @@ export default defineConfig({
             '@components': path.resolve(__dirname, './src/components')
         }
     },
-    server: {},
+    server: {
+        port: 3000,
+    },
     optimizeDeps: {
         include: [],
         exclude: []

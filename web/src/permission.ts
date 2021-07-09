@@ -23,6 +23,8 @@ import router from './router'
 import { RouteLocationNormalized } from 'vue-router'
 import { useStore } from './store'
 import { ElMessage } from 'element-plus'
+import {getMenu} from "./apis/login";
+import {getToken} from "./utils/cookies";
 NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login', '/redirect']
@@ -31,15 +33,18 @@ router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized,
   // Start progress bar
   NProgress.start()
   const store = useStore()
-  console.log("进入：", to.path)
   // Determine whether the user has logged in
-  if (store.state.user.access_token) {
+  console.log("token", store.state.user.access_token)
+  const token = getToken()
+  if (token) {
     if (to.path === '/login') {
       // If is logged in, redirect to the home page
-      console.log("登录跳转首页")
       next({ path: '/' })
       NProgress.done()
     } else {
+      getMenu().then((res: any) => {
+        console.log(res)
+      })
       // Check whether the user has obtained his permission roles
       // console.log(store.state.user.roles)
       // if (store.state.user.roles == '') {
@@ -79,8 +84,6 @@ router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized,
       //   console.log(2)
       //   next()
       // }
-
-      console.log(3)
       NProgress.done()
       next()
     }
@@ -88,7 +91,6 @@ router.beforeEach(async(to: RouteLocationNormalized, _: RouteLocationNormalized,
     // Has no token
     if (whiteList.indexOf(to.path) !== -1) {
       // In the free login whitelist, go directly
-      console.log(5)
       next()
     } else {
       // Other pages that do not have permission to access are redirected to the login page.
@@ -104,5 +106,5 @@ router.afterEach((to: RouteLocationNormalized) => {
   NProgress.done()
 
   // set page title
-  document.title = '123'
+  document.title = to.meta.title || 'gea';
 })

@@ -1,11 +1,3 @@
-<!--
- * @Description: 重定向
- * @Author: LLiuHuan
- * @Date: 2021-02-18 14:16:11
- * @LastEditTime: 2021-02-18 16:58:01
- * @LastEditors: LLiuHuan
--->
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

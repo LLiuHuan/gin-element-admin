@@ -1,10 +1,11 @@
 import HttpClient, {HttpClientConfig} from 'axios-mapper';
+import {getToken} from "./cookies";
 
 const https = (hasToken: boolean = true) => {
     const config: HttpClientConfig = {
         baseURL: 'http://127.0.0.1:8888',
         headers: {
-            Authorization: hasToken ? 'Bearer token' : '',
+            Authorization: hasToken ? 'Bearer ' + getToken() : '',
         },
     };
 
